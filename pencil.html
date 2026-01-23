@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencil Art — Averix Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --gold: #ffcc00;
+            --cyan: #00eaff;
+            --bg-dark: #0e0e0e;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        body { background: var(--bg-dark); color: white; overflow-x: hidden; }
+
+        /* --- Header --- */
+        .header {
+            text-align: center; padding: 100px 0 10px 0;
+            font-size: clamp(26px, 6vw, 38px); font-weight: 700;
+            color: var(--gold); text-shadow: 0 0 15px rgba(255, 204, 0, 0.3);
+        }
+
+        .subtitle {
+            text-align: center; font-size: 16px; opacity: 0.8;
+            margin-bottom: 40px; padding: 0 20px;
+        }
+
+        /* --- Navigation --- */
+        .back-btn {
+            position: fixed; top: 20px; left: 20px; background: var(--glass);
+            padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px); font-size: 14px; color: var(--gold);
+            text-decoration: none; z-index: 1000; transition: 0.3s; font-weight: 600;
+        }
+        .back-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 15px var(--gold); }
+
+        /* --- Container --- */
+        .container {
+            width: 90%; max-width: 1200px; margin: auto;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px; padding-bottom: 50px;
+        }
+
+        .plan {
+            background: var(--glass); padding: 30px; border-radius: 24px;
+            border: 1px solid rgba(255, 204, 0, 0.15); backdrop-filter: blur(10px);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; position: relative;
+        }
+
+        .plan:hover {
+            transform: translateY(-10px); border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(255, 204, 0, 0.1);
+        }
+
+        .plan-title {
+            font-size: 20px; font-weight: 700; margin-bottom: 12px;
+            color: var(--gold); min-height: 50px;
+        }
+
+        .price {
+            font-size: 32px; font-weight: 800; margin-bottom: 20px;
+            color: var(--cyan); text-shadow: 0 0 10px rgba(0, 234, 255, 0.2);
+        }
+        .price small { font-size: 14px; opacity: 0.6; color: #fff; }
+
+        .features { margin-bottom: 25px; list-style: none; flex-grow: 1; }
+        .features li {
+            margin: 10px 0; font-size: 14px; opacity: 0.9;
+            display: flex; align-items: center;
+        }
+        .features li::before {
+            content: "●"; color: var(--gold); margin-right: 10px; font-size: 10px;
+        }
+
+        /* --- Form & Buttons --- */
+        .order-input {
+            width: 100%; background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1); padding: 12px;
+            border-radius: 12px; color: #fff; font-size: 13px;
+            margin-bottom: 15px; outline: none; resize: none; transition: 0.3s;
+        }
+        .order-input:focus { border-color: var(--cyan); }
+
+        .btn {
+            display: block; width: 100%; padding: 14px;
+            background: var(--gold); color: black; text-align: center;
+            font-weight: 700; border-radius: 12px; text-decoration: none;
+            border: none; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn:hover { background: #fff; transform: scale(1.02); box-shadow: 0 0 20px var(--gold); }
+
+        /* --- Portfolio Section --- */
+        .sample-title {
+            text-align: center; margin-top: 60px; font-size: 28px;
+            font-weight: 700; color: var(--cyan);
+        }
+
+        .portfolio-grid {
+            width: 90%; max-width: 1200px; margin: 40px auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .art-card {
+            background: rgba(255,255,255,0.02); padding: 25px;
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);
+            text-align: center; transition: 0.3s;
+        }
+        .art-card:hover { border-color: var(--gold); background: rgba(255, 204, 0, 0.03); }
+        .art-card h4 { margin-bottom: 15px; color: #fff; font-size: 16px; }
+
+        .view-art-btn {
+            display: inline-block; color: var(--cyan); text-decoration: none;
+            border: 1px solid var(--cyan); padding: 6px 20px;
+            border-radius: 30px; font-size: 13px; font-weight: 600; transition: 0.3s;
+        }
+        .view-art-btn:hover { background: var(--cyan); color: #000; }
+
+        .no-data { text-align: center; color: #555; grid-column: 1 / -1; padding: 40px; }
+
+        /* Specific Highlight for Frames */
+        .frame-highlight { border: 2px solid var(--cyan) !important; background: rgba(0, 234, 255, 0.03); }
+        .frame-highlight .btn { background: var(--cyan); }
+
+        @media (max-width: 768px) {
+            .header { padding-top: 80px; }
+            .container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+<a href="index.html" class="back-btn">← Home</a>
+
+<div class="header" data-aos="fade-down">✏️ Pencil & Colour Art Services</div>
+<div class="subtitle" data-aos="fade-up">Beautiful hand-drawn portraits. Perfect for gifts and memories.</div>
+
+<div class="container">
+    <div class="plan" data-aos="fade-up">
+        <div class="plan-title">Pencil Art<br>(Single Person)</div>
+        <div class="price">₹100</div>
+        <ul class="features">
+            <li>Black & White Portrait</li>
+            <li>A4 High Quality Sheet</li>
+            <li>High Accuracy Face Sketch</li>
+            <li>Delivery: 1 Day</li>
+        </ul>
+        <div class="order-form">
+            <textarea id="msg-single" class="order-input" placeholder="Mention photo details or custom notes..."></textarea>
+            <button onclick="orderWA('Pencil Art - Single Person', 'msg-single')" class="btn">Order Now</button>
+        </div>
+    </div>
+
+    <div class="plan" data-aos="fade-up" data-aos-delay="100">
+        <div class="plan-title">Multiple Person<br>Pencil Art</div>
+        <div class="price">₹100 <small>/ person</small></div>
+        <ul class="features">
+            <li>2 People = ₹200</li>
+            <li>3 People = ₹300</li>
+            <li>Group Portraits</li>
+            <li>Wall-Ready Options</li>
+        </ul>
+        <div class="order-form">
+            <textarea id="msg-multi" class="order-input" placeholder="How many persons in the photo?"></textarea>
+            <button onclick="orderWA('Pencil Art - Multiple Persons', 'msg-multi')" class="btn">Order Now</button>
+        </div>
+    </div>
+
+    <div class="plan frame-highlight" data-aos="fade-up" data-aos-delay="200">
+        <div class="plan-title">Add Premium<br>Frame</div>
+        <div class="price">₹800</div>
+        <ul class="features">
+            <li>Premium Quality Frame</li>
+            <li>Glass Protection</li>
+            <li>Wall-Ready & Beautiful</li>
+            <li>Perfect for Gifts</li>
+        </ul>
+        <div class="order-form">
+            <textarea id="msg-frame" class="order-input" placeholder="Any specific frame color (Black/Brown/Gold)?"></textarea>
+            <button onclick="orderWA('Add-on: Premium Frame', 'msg-frame')" class="btn">Add Frame</button>
+        </div>
+    </div>
+
+    <div class="plan" data-aos="fade-up" data-aos-delay="300">
+        <div class="plan-title">Colour Pencil<br>Art</div>
+        <div class="price">₹250</div>
+        <ul class="features">
+            <li>Full Colour Portrait</li>
+            <li>A4 or A3 Sheet Options</li>
+            <li>Smooth Colour Blending</li>
+            <li>Delivery: 2 Days</li>
+        </ul>
+        <div class="order-form">
+            <textarea id="msg-colour" class="order-input" placeholder="Describe your photo and size..."></textarea>
+            <button onclick="orderWA('Colour Pencil Art', 'msg-colour')" class="btn">Order Now</button>
+        </div>
+    </div>
+</div>
+
+<div class="sample-title" data-aos="fade-up">📸 Our Recent Artworks</div>
+<div class="portfolio-grid">
+    {% if items %}
+        {% for item in items %}
+        <div class="art-card" data-aos="zoom-in">
+            <h4>{{ item.title }}</h4>
+            <a href="{{ item.link }}" target="_blank" class="view-art-btn">View Artwork →</a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-data">No art samples uploaded yet. New sketches coming soon!</div>
+    {% endif %}
+</div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 1000, once: true });
+
+    // WhatsApp Order Logic
+    function orderWA(serviceName, inputId) {
+        const userMsg = document.getElementById(inputId).value;
+        const phone = "919360436090";
+        
+        const finalMsg = `Hello Averix Art Studio! ✏️\nI want to order: *${serviceName}*.\n\n*Details:* ${userMsg || 'I want to discuss the portrait details.'}`;
+        
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMsg)}`, '_blank');
+    }
+</script>
+
+</body>
+</html>
