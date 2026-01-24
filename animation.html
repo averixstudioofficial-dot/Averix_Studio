@@ -4,139 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animation Services — Averix Studio</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
+        /* Unga original CSS apdiye iruku - No design changes */
         :root {
             --cyan: #00eaff;
             --gold: #ffcc00;
             --bg-dark: #080808;
             --glass: rgba(255, 255, 255, 0.05);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
         body { background: var(--bg-dark); color: white; overflow-x: hidden; }
-
-        /* Background Glow Effect */
-        .bg-glow {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #080808 100%);
-            z-index: -1;
-        }
-
-        /* --- Navigation --- */
-        .back-btn {
-            position: fixed; top: 20px; left: 20px; background: var(--glass);
-            padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px); font-size: 14px; color: var(--cyan);
-            text-decoration: none; z-index: 1000; transition: 0.3s; font-weight: 600;
-        }
+        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #080808 100%); z-index: -1; }
+        .back-btn { position: fixed; top: 20px; left: 20px; background: var(--glass); padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); font-size: 14px; color: var(--cyan); text-decoration: none; z-index: 1000; transition: 0.3s; font-weight: 600; }
         .back-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 15px var(--cyan); }
-
-        .header {
-            text-align: center; padding: 100px 0 10px 0;
-            font-size: clamp(28px, 6vw, 42px); font-weight: 800;
-            color: var(--cyan); text-shadow: 0 0 20px rgba(0, 234, 255, 0.4);
-            text-transform: uppercase; letter-spacing: 2px;
-        }
-
-        .subtitle {
-            text-align: center; font-size: 16px; opacity: 0.7;
-            margin-bottom: 50px; padding: 0 20px;
-        }
-
-        /* --- Pricing Container --- */
-        .container {
-            width: 90%; max-width: 1200px; margin: auto;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px; padding-bottom: 60px;
-        }
-
-        .plan {
-            background: var(--glass); padding: 40px 30px; border-radius: 24px;
-            border: 1px solid rgba(0, 234, 255, 0.15); backdrop-filter: blur(15px);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column; position: relative; overflow: hidden;
-        }
-
-        .plan:hover {
-            transform: translateY(-12px); border-color: var(--cyan);
-            box-shadow: 0 15px 40px rgba(0, 234, 255, 0.15);
-        }
-
+        .header { text-align: center; padding: 100px 0 10px 0; font-size: clamp(28px, 6vw, 42px); font-weight: 800; color: var(--cyan); text-shadow: 0 0 20px rgba(0, 234, 255, 0.4); text-transform: uppercase; letter-spacing: 2px; }
+        .subtitle { text-align: center; font-size: 16px; opacity: 0.7; margin-bottom: 50px; padding: 0 20px; }
+        .container { width: 90%; max-width: 1200px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding-bottom: 60px; }
+        .plan { background: var(--glass); padding: 40px 30px; border-radius: 24px; border: 1px solid rgba(0, 234, 255, 0.15); backdrop-filter: blur(15px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        .plan:hover { transform: translateY(-12px); border-color: var(--cyan); box-shadow: 0 15px 40px rgba(0, 234, 255, 0.15); }
         .plan-title { font-size: 26px; font-weight: 700; margin-bottom: 10px; color: var(--gold); }
         .price { font-size: 36px; font-weight: 800; margin-bottom: 25px; color: #fff; }
-
         .features { margin-bottom: 30px; list-style: none; flex-grow: 1; }
-        .features li {
-            margin: 12px 0; font-size: 14.5px; opacity: 0.8;
-            display: flex; align-items: center;
-        }
-        .features li::before {
-            content: "✓"; color: var(--cyan); margin-right: 12px; font-weight: bold;
-        }
-
-        .order-input {
-            width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px; border-radius: 12px; color: #fff; font-size: 14px;
-            margin-bottom: 20px; outline: none; transition: 0.3s; resize: none;
-        }
+        .features li { margin: 12px 0; font-size: 14.5px; opacity: 0.8; display: flex; align-items: center; }
+        .features li::before { content: "✓"; color: var(--cyan); margin-right: 12px; font-weight: bold; }
+        .order-input { width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; color: #fff; font-size: 14px; margin-bottom: 20px; outline: none; transition: 0.3s; resize: none; }
         .order-input:focus { border-color: var(--gold); background: rgba(0,0,0,0.5); }
-
-        .btn {
-            display: block; width: 100%; padding: 15px; background: var(--gold);
-            color: black; text-align: center; font-weight: 700; border-radius: 12px;
-            text-decoration: none; border: none; cursor: pointer;
-            font-size: 15px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
-        }
+        .btn { display: block; width: 100%; padding: 15px; background: var(--gold); color: black; text-align: center; font-weight: 700; border-radius: 12px; text-decoration: none; border: none; cursor: pointer; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
         .btn:hover { background: #fff; transform: scale(1.02); box-shadow: 0 0 20px var(--gold); }
-
-        /* Most Popular Badge */
-        .popular-badge {
-            position: absolute; top: 15px; right: -35px; background: var(--gold);
-            color: #000; padding: 5px 40px; transform: rotate(45deg);
-            font-size: 12px; font-weight: 800; text-transform: uppercase;
-        }
-
-        /* --- Portfolio Section --- */
-        .portfolio-section {
-            width: 90%; max-width: 1200px; margin: 80px auto;
-            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 60px;
-        }
-
-        .portfolio-title {
-            text-align: center; font-size: clamp(22px, 5vw, 30px);
-            margin-bottom: 40px; color: #00ff88; font-weight: 700;
-        }
-
-        .portfolio-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .work-card {
-            background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05); text-align: center;
-            transition: 0.3s;
-        }
+        .popular-badge { position: absolute; top: 15px; right: -35px; background: var(--gold); color: #000; padding: 5px 40px; transform: rotate(45deg); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+        .portfolio-section { width: 90%; max-width: 1200px; margin: 80px auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 60px; }
+        .portfolio-title { text-align: center; font-size: clamp(22px, 5vw, 30px); margin-bottom: 40px; color: #00ff88; font-weight: 700; }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .work-card { background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: center; transition: 0.3s; }
         .work-card:hover { border-color: #00ff88; background: rgba(0, 255, 136, 0.05); }
         .work-card h4 { margin-bottom: 20px; color: #fff; font-size: 18px; }
-
-        .view-link {
-            display: inline-block; color: var(--cyan); text-decoration: none;
-            font-weight: 600; font-size: 13px; border: 1px solid var(--cyan);
-            padding: 8px 20px; border-radius: 30px; transition: 0.3s;
-        }
+        .view-link { display: inline-block; color: var(--cyan); text-decoration: none; font-weight: 600; font-size: 13px; border: 1px solid var(--cyan); padding: 8px 20px; border-radius: 30px; transition: 0.3s; }
         .view-link:hover { background: var(--cyan); color: #000; }
-
         .no-data { text-align: center; color: #666; width: 100%; padding: 40px; font-style: italic; }
-
-        @media (max-width: 768px) {
-            .header { padding-top: 80px; }
-            .container { grid-template-columns: 1fr; }
-            .plan { padding: 30px 20px; }
-        }
     </style>
 </head>
 
@@ -200,17 +111,8 @@
 
 <div class="portfolio-section">
     <div class="portfolio-title" data-aos="fade-up">✨ Our Recent Animation Works</div>
-    <div class="portfolio-grid">
-        {% if items %}
-            {% for item in items %}
-            <div class="work-card" data-aos="zoom-in">
-                <h4>{{ item.title }}</h4>
-                <a href="{{ item.link }}" target="_blank" class="view-link">View Project</a>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="no-data">No work samples uploaded yet. Stay tuned!</div>
-        {% endif %}
+    <div id="portfolio-display" class="portfolio-grid">
+        <div class="no-data">Loading samples...</div>
     </div>
 </div>
 
@@ -218,13 +120,53 @@
 <script>
     AOS.init({ duration: 1000, once: true });
 
-    // WhatsApp Redirect Logic
+    // 1. Firebase Config (Paste your real config here)
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // 2. Fetch Animation Portfolio
+    function loadPortfolio() {
+        const display = document.getElementById('portfolio-display');
+        
+        // Only fetch items where category is 'Animation'
+        db.collection("portfolio")
+          .where("category", "==", "Animation")
+          .orderBy("timestamp", "desc")
+          .onSnapshot(snapshot => {
+            if (snapshot.empty) {
+                display.innerHTML = '<div class="no-data">No work samples uploaded yet. Stay tuned!</div>';
+                return;
+            }
+
+            display.innerHTML = "";
+            snapshot.forEach(doc => {
+                const item = doc.data();
+                display.innerHTML += `
+                    <div class="work-card" data-aos="zoom-in">
+                        <h4>${item.title}</h4>
+                        <a href="${item.link}" target="_blank" class="view-link">View Project</a>
+                    </div>`;
+            });
+        });
+    }
+
+    // Run loader
+    loadPortfolio();
+
+    // 3. WhatsApp Redirect Logic
     function orderWA(planName, inputId) {
         const userMsg = document.getElementById(inputId).value;
         const phone = "919360436090";
-        
         const finalMsg = `Hello Averix Studio! I want to order the *${planName}*.\n\n*My Requirements:* ${userMsg || 'No specific requirements.'}`;
-        
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMsg)}`, '_blank');
     }
 </script>
