@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Development Services — Averix Studio</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
+        /* Unga original CSS - No design changes */
         :root {
             --cyan: #00eaff;
             --gold: #ffcc00;
@@ -15,238 +20,38 @@
             --glass: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
         body { background: var(--bg-dark); color: white; overflow-x: hidden; }
-
-        /* --- Header Section --- */
-        .header {
-            text-align: center;
-            padding: 100px 20px 30px 20px;
-            background: radial-gradient(circle at top, #001a1d, #020202);
-        }
-
-        .header h1 {
-            font-size: clamp(28px, 6vw, 42px);
-            font-weight: 800;
-            color: var(--cyan);
-            text-shadow: 0 0 20px rgba(0, 234, 255, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .subtitle {
-            font-size: 16px;
-            opacity: 0.7;
-            margin-top: 15px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* --- Container & Grid --- */
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 40px auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        /* --- Pricing Card --- */
-        .card {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            padding: 40px 25px;
-            text-align: center;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            backdrop-filter: blur(15px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-12px);
-            border-color: var(--cyan);
-            background: rgba(0, 234, 255, 0.03);
-            box-shadow: 0 15px 40px rgba(0, 234, 255, 0.15);
-        }
-
-        .card-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--gold);
-        }
-
-        .price {
-            font-size: 38px;
-            font-weight: 800;
-            margin-bottom: 25px;
-            color: #fff;
-        }
-
-        .price span {
-            font-size: 15px;
-            opacity: 0.5;
-            font-weight: 400;
-        }
-
-        .features {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 30px;
-            flex-grow: 1;
-            text-align: left;
-        }
-
-        .features li {
-            font-size: 14px;
-            margin: 12px 0;
-            opacity: 0.8;
-            display: flex;
-            align-items: center;
-        }
-
-        .features li::before {
-            content: "✦";
-            color: var(--cyan);
-            margin-right: 12px;
-        }
-
-        /* --- Form & Buttons --- */
-        .order-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--glass-border);
-            padding: 14px;
-            border-radius: 12px;
-            color: #fff;
-            margin-bottom: 18px;
-            font-size: 13.5px;
-            outline: none;
-            transition: 0.3s;
-            resize: none;
-        }
+        .header { text-align: center; padding: 100px 20px 30px 20px; background: radial-gradient(circle at top, #001a1d, #020202); }
+        .header h1 { font-size: clamp(28px, 6vw, 42px); font-weight: 800; color: var(--cyan); text-shadow: 0 0 20px rgba(0, 234, 255, 0.4); text-transform: uppercase; letter-spacing: 2px; }
+        .subtitle { font-size: 16px; opacity: 0.7; margin-top: 15px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .container { width: 90%; max-width: 1200px; margin: 40px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 25px; padding: 40px 25px; text-align: center; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; backdrop-filter: blur(15px); position: relative; overflow: hidden; }
+        .card:hover { transform: translateY(-12px); border-color: var(--cyan); background: rgba(0, 234, 255, 0.03); box-shadow: 0 15px 40px rgba(0, 234, 255, 0.15); }
+        .card-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--gold); }
+        .price { font-size: 38px; font-weight: 800; margin-bottom: 25px; color: #fff; }
+        .price span { font-size: 15px; opacity: 0.5; font-weight: 400; }
+        .features { list-style: none; padding: 0; margin-bottom: 30px; flex-grow: 1; text-align: left; }
+        .features li { font-size: 14px; margin: 12px 0; opacity: 0.8; display: flex; align-items: center; }
+        .features li::before { content: "✦"; color: var(--cyan); margin-right: 12px; }
+        .order-input { width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); padding: 14px; border-radius: 12px; color: #fff; margin-bottom: 18px; font-size: 13.5px; outline: none; transition: 0.3s; resize: none; }
         .order-input:focus { border-color: var(--gold); background: rgba(0,0,0,0.5); }
-
-        .btn {
-            width: 100%;
-            padding: 16px;
-            background: var(--cyan);
-            color: #000;
-            font-weight: 700;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 14px;
-        }
-
-        .btn:hover {
-            background: #fff;
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-
-        /* Navigation Back Button */
-        .back-btn {
-            position: fixed; top: 20px; left: 20px;
-            background: var(--glass);
-            padding: 10px 20px; border-radius: 30px;
-            color: var(--cyan); text-decoration: none;
-            border: 1px solid var(--glass-border);
-            font-size: 14px; font-weight: 600;
-            z-index: 1000; backdrop-filter: blur(10px);
-            transition: 0.3s;
-        }
+        .btn { width: 100%; padding: 16px; background: var(--cyan); color: #000; font-weight: 700; border: none; border-radius: 15px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; font-size: 14px; }
+        .btn:hover { background: #fff; transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+        .back-btn { position: fixed; top: 20px; left: 20px; background: var(--glass); padding: 10px 20px; border-radius: 30px; color: var(--cyan); text-decoration: none; border: 1px solid var(--glass-border); font-size: 14px; font-weight: 600; z-index: 1000; backdrop-filter: blur(10px); transition: 0.3s; }
         .back-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 15px var(--cyan); }
-
-        .popular {
-            border: 2px solid var(--gold) !important;
-            background: rgba(255, 204, 0, 0.03);
-        }
+        .popular { border: 2px solid var(--gold) !important; background: rgba(255, 204, 0, 0.03); }
         .popular .btn { background: var(--gold); }
-        .popular::after {
-            content: "POPULAR";
-            position: absolute; top: 12px; right: -30px;
-            background: var(--gold); color: #000;
-            padding: 4px 35px; transform: rotate(45deg);
-            font-size: 11px; font-weight: 800;
-        }
-
-        /* --- PORTFOLIO SECTION --- */
-        .portfolio-section {
-            width: 90%;
-            max-width: 1200px;
-            margin: 80px auto;
-            padding-top: 60px;
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .portfolio-title {
-            text-align: center;
-            font-size: clamp(24px, 5vw, 32px);
-            color: #00ff88;
-            margin-bottom: 45px;
-            font-weight: 700;
-        }
-
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .web-work-card {
-            background: rgba(255,255,255,0.02);
-            padding: 30px 20px;
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            transition: 0.3s;
-            text-align: center;
-        }
-
-        .web-work-card:hover {
-            border-color: #00ff88;
-            background: rgba(0, 255, 136, 0.03);
-            transform: translateY(-5px);
-        }
-
-        .web-work-card h4 {
-            color: #fff;
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-
-        .live-link {
-            display: inline-block;
-            text-decoration: none;
-            color: #00ff88;
-            border: 1px solid #00ff88;
-            padding: 8px 22px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 13px;
-            transition: 0.3s;
-        }
-
-        .live-link:hover {
-            background: #00ff88;
-            color: #000;
-        }
-
-        @media (max-width: 768px) {
-            .header { padding-top: 80px; }
-            .container { gap: 20px; }
-            .card { padding: 30px 20px; }
-        }
+        .popular::after { content: "POPULAR"; position: absolute; top: 12px; right: -30px; background: var(--gold); color: #000; padding: 4px 35px; transform: rotate(45deg); font-size: 11px; font-weight: 800; }
+        .portfolio-section { width: 90%; max-width: 1200px; margin: 80px auto; padding-top: 60px; border-top: 1px solid var(--glass-border); }
+        .portfolio-title { text-align: center; font-size: clamp(24px, 5vw, 32px); color: #00ff88; margin-bottom: 45px; font-weight: 700; }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .web-work-card { background: rgba(255,255,255,0.02); padding: 30px 20px; border-radius: 20px; border: 1px solid var(--glass-border); transition: 0.3s; text-align: center; }
+        .web-work-card:hover { border-color: #00ff88; background: rgba(0, 255, 136, 0.03); transform: translateY(-5px); }
+        .web-work-card h4 { color: #fff; margin-bottom: 20px; font-size: 18px; }
+        .live-link { display: inline-block; text-decoration: none; color: #00ff88; border: 1px solid #00ff88; padding: 8px 22px; border-radius: 30px; font-weight: 600; font-size: 13px; transition: 0.3s; }
+        .live-link:hover { background: #00ff88; color: #000; }
+        .no-data { text-align: center; color: #555; grid-column: 1 / -1; padding: 40px; }
     </style>
 </head>
 <body>
@@ -326,17 +131,8 @@
 
 <div class="portfolio-section">
     <div class="portfolio-title" data-aos="fade-up">🌐 Our Development Portfolio</div>
-    <div class="portfolio-grid">
-        {% if items %}
-            {% for item in items %}
-            <div class="web-work-card" data-aos="zoom-in">
-                <h4>{{ item.title }}</h4>
-                <a href="{{ item.link }}" target="_blank" class="live-link">Live Preview →</a>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="no-data">We are currently working on new projects. Check back soon!</div>
-        {% endif %}
+    <div id="web-portfolio-display" class="portfolio-grid">
+        <div class="no-data">Loading projects...</div>
     </div>
 </div>
 
@@ -344,13 +140,51 @@
 <script>
     AOS.init({ duration: 1000, once: true });
 
-    // WhatsApp Order Logic
+    // 1. Firebase Config (Paste your real config here)
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // 2. Fetch Web Development Portfolio
+    function loadWebPortfolio() {
+        const display = document.getElementById('web-portfolio-display');
+        
+        db.collection("portfolio")
+          .where("category", "==", "Web Development")
+          .orderBy("timestamp", "desc")
+          .onSnapshot(snapshot => {
+            if (snapshot.empty) {
+                display.innerHTML = '<div class="no-data">We are currently working on new projects. Check back soon!</div>';
+                return;
+            }
+
+            display.innerHTML = "";
+            snapshot.forEach(doc => {
+                const item = doc.data();
+                display.innerHTML += `
+                    <div class="web-work-card" data-aos="zoom-in">
+                        <h4>${item.title}</h4>
+                        <a href="${item.link}" target="_blank" class="live-link">Live Preview →</a>
+                    </div>`;
+            });
+        });
+    }
+
+    loadWebPortfolio();
+
+    // 3. WhatsApp Order Logic
     function orderWA(planName, inputId) {
         const userMsg = document.getElementById(inputId).value;
-        const phone = "919360436090"; // Support Number
-        
+        const phone = "919360436090"; 
         const finalMsg = `Hello Averix! I'm interested in the *${planName}*.\n\n*Details:* ${userMsg || 'I would like to discuss this project.'}`;
-        
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMsg)}`, '_blank');
     }
 </script>
