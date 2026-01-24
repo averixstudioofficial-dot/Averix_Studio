@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Averix Studio – Contact Premium</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
@@ -16,10 +21,10 @@
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
+        /* Unga original CSS apdiye iruku... */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
         body { background: var(--bg-black); color: #fff; overflow-x: hidden; }
 
-        /* ---------- Responsive Video Background ---------- */
         .video-bg {
             position: fixed; top: 50%; left: 50%; width: 100%; height: 100%;
             z-index: -2; transform: translate(-50%, -50%);
@@ -40,7 +45,6 @@
             box-shadow: 0 0 20px var(--gold); z-index: 100;
         }
 
-        /* Back Button Style (Consistent with other pages) */
         .back-btn {
             position: fixed; top: 20px; left: 25px; background: rgba(0,0,0,0.6);
             padding: 10px 20px; border-radius: 30px; border: 1px solid var(--gold);
@@ -50,7 +54,6 @@
         }
         .back-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 15px var(--gold); }
 
-        /* Banner */
         .banner {
             width: 100%; height: 35vh;
             display: flex; justify-content: center; align-items: center;
@@ -70,7 +73,6 @@
             padding: 20px 5% 80px; gap: 30px; position: relative; z-index: 1;
         }
 
-        /* Info Panel */
         .info-panel {
             flex: 1; min-width: 320px; padding: 40px; border-radius: 30px;
             background: var(--glass); backdrop-filter: blur(20px);
@@ -83,7 +85,6 @@
         .sub-title { color: var(--gold); font-size: 17px; margin-top: 25px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
         .text-block { font-size: 14.5px; opacity: 0.8; line-height: 1.8; }
 
-        /* Contact Card */
         .contact-card {
             flex: 1; min-width: 320px; padding: 40px; border-radius: 30px;
             background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(25px);
@@ -92,7 +93,6 @@
 
         .contact-title { font-size: 24px; color: var(--gold); font-weight: 700; margin-bottom: 25px; text-transform: uppercase; }
 
-        /* Form Styles */
         .contact-form textarea {
             width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--glass-border);
             padding: 18px; border-radius: 15px; color: #fff; margin-bottom: 20px;
@@ -119,14 +119,6 @@
         .working-hours {
             margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border);
         }
-
-        /* --- MOBILE ADJUSTMENTS --- */
-        @media (max-width: 768px) {
-            .container { padding: 10px 5% 50px; }
-            .info-panel, .contact-card { padding: 30px 20px; min-width: 100%; }
-            .back-btn { top: 15px; left: 15px; padding: 8px 15px; font-size: 13px; }
-            .banner { height: 30vh; }
-        }
     </style>
 </head>
 <body>
@@ -146,7 +138,6 @@
 </div>
 
 <div class="container">
-
     <div class="info-panel" data-aos="fade-right">
         <h2 class="section-title">Our Vision</h2>
         <p class="text-block">
@@ -157,32 +148,21 @@
         <h3 class="sub-title">Quick Support</h3>
         <p class="text-block">
             📞 +91 93604 36090<br>
-            📞 +91 86950 02297<br>
-            📞 +91 90256 52212<br>
-            📞 +91 93451 38809
-        </p>
-
-        <h3 class="sub-title">Office Location</h3>
-        <p class="text-block">
-            Tiruchengodu (TK), Namakkal (DT),<br>
-            Tamil Nadu – 637211
+            📧 averixstudioofficial@gmail.com
         </p>
 
         <div class="social-links">
             <a href="https://www.instagram.com/averix_animation" target="_blank">Instagram</a>
             <a href="https://www.linkedin.com/in/averix-studio-8410a9393" target="_blank">LinkedIn</a>
-            <a href="https://www.facebook.com/share/16wVbpUeUj/" target="_blank">Facebook</a>
         </div>
     </div>
 
     <div class="contact-card" data-aos="fade-left">
         <h2 class="contact-title">Start a Conversation</h2>
-        
         <div class="contact-form">
-            <p style="font-size: 14px; margin-bottom: 12px; color: var(--gold); opacity: 0.9;">How can we help your brand grow?</p>
-            <textarea id="userMessage" rows="6" placeholder="Tell us about your project or query..." required></textarea>
-            
-            <button onclick="sendToWhatsApp()" class="submit-btn">Send Message via WhatsApp</button>
+            <p style="font-size: 14px; margin-bottom: 12px; color: var(--gold); opacity: 0.9;">Tell us your name and your project query:</p>
+            <textarea id="userMessage" rows="6" placeholder="Example: Hi, I'm Santhosh. I want to inquire about 3D Animation services..." required></textarea>
+            <button id="sendBtn" onclick="handleContactSubmit()" class="submit-btn">Send via WhatsApp & Cloud</button>
         </div>
 
         <div class="working-hours">
@@ -190,28 +170,58 @@
             <p style="font-size: 13.5px; opacity: 0.7;">Monday - Saturday: 09:00 AM - 08:00 PM</p>
         </div>
     </div>
-
 </div>
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     AOS.init({ duration: 1000, once: true });
 
-    // WhatsApp Integration Script
-    function sendToWhatsApp() {
+    // 1. Firebase Configuration (Paste your real config here)
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // 2. Logic to Save to Firestore and Redirect to WhatsApp
+    function handleContactSubmit() {
         const message = document.getElementById('userMessage').value;
-        const phoneNumber = "919360436090"; // Main Support Number
+        const btn = document.getElementById('sendBtn');
+        const phoneNumber = "919360436090";
 
         if (message.trim() === "") {
             alert("Please enter a message!");
             return;
         }
 
-        // URL Encoding for WhatsApp
-        const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent("Averix Support Request: " + message)}`;
-        
-        // Redirect to WhatsApp
-        window.open(whatsappURL, '_blank');
+        btn.innerText = "Processing...";
+        btn.disabled = true;
+
+        // Step A: Save to Firestore for Backup
+        db.collection("enquiries").add({
+            message: message,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then(() => {
+            // Step B: Redirect to WhatsApp
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent("Averix Support Request: " + message)}`;
+            window.open(whatsappURL, '_blank');
+            
+            // Success reset
+            btn.innerText = "Message Sent!";
+            document.getElementById('userMessage').value = "";
+        })
+        .catch((error) => {
+            console.error("Error saving message: ", error);
+            alert("Something went wrong, but you can still message on WhatsApp.");
+            window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+        });
     }
 </script>
 
