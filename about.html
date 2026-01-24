@@ -27,7 +27,7 @@
 
         .video-bg video {
             width: 100%; height: 100%; object-fit: cover;
-            opacity: 0.35; /* Gold text nalla theriya opacity konjam kuraichuruken */
+            opacity: 0.35;
         }
 
         .video-overlay {
@@ -36,14 +36,13 @@
             z-index: -1;
         }
 
-        /* Gold Beam for Premium Look */
+        /* Gold Beam */
         .gold-beam {
             position: fixed; left: 0; top: 0; width: 4px; height: 100%;
             background: linear-gradient(var(--gold), var(--dark-gold), var(--gold));
             box-shadow: 0 0 20px var(--gold); z-index: 100;
         }
 
-        /* --- Updated Navigation (Matches Index) --- */
         .back-btn {
             position: fixed; top: 20px; left: 25px; background: rgba(0,0,0,0.6);
             padding: 10px 20px; border-radius: 30px; border: 1px solid var(--gold);
@@ -53,7 +52,6 @@
         }
         .back-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 15px var(--gold); }
 
-        /* Banner Style */
         .banner {
             width: 100%; height: 50vh;
             display: flex; justify-content: center; align-items: center;
@@ -82,7 +80,6 @@
             background: var(--gold); border-radius: 2px;
         }
 
-        /* Leadership Grid */
         .directors-grid {
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-bottom: 60px;
         }
@@ -109,7 +106,6 @@
         .member-card h3 { font-size: 22px; color: #fff; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .role { font-size: 13px; color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
 
-        /* Connect Panel */
         .connect-panel {
             margin-top: 60px; padding: 50px 30px; border-radius: 40px;
             background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px);
@@ -131,9 +127,8 @@
         }
         .social-btns a:hover { background: var(--gold); color: #000; border-color: var(--gold); transform: scale(1.05); }
 
-        /* --- MOBILE TWEAKS --- */
         @media (max-width: 768px) {
-            .directors-grid { grid-template-columns: 1fr; } /* Phone-la oru line-ku oru founder */
+            .directors-grid { grid-template-columns: 1fr; }
             .banner { height: 40vh; }
             .back-btn { top: 15px; left: 15px; padding: 8px 15px; font-size: 13px; }
         }
@@ -213,7 +208,7 @@
             </div>
         </div>
         <div class="social-btns">
-            <a href="https://www.instagram.com/averix_animation?igsh=MTh4MDRqYzl5bGZlag==" target="_blank">Instagram</a>
+            <a href="https://www.instagram.com/averix_animation" target="_blank">Instagram</a>
             <a href="https://www.linkedin.com/in/averix-studio-8410a9393" target="_blank">LinkedIn</a>
             <a href="https://www.facebook.com/share/16wVbpUeUj/" target="_blank">Facebook</a>
         </div>
