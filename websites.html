@@ -6,13 +6,13 @@
     <title>Web Development Services — Averix Studio</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
-        /* Unga original CSS - No design changes */
         :root {
             --cyan: #00eaff;
             --gold: #ffcc00;
@@ -35,7 +35,6 @@
         .features li { font-size: 14px; margin: 12px 0; opacity: 0.8; display: flex; align-items: center; }
         .features li::before { content: "✦"; color: var(--cyan); margin-right: 12px; }
         .order-input { width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); padding: 14px; border-radius: 12px; color: #fff; margin-bottom: 18px; font-size: 13.5px; outline: none; transition: 0.3s; resize: none; }
-        .order-input:focus { border-color: var(--gold); background: rgba(0,0,0,0.5); }
         .btn { width: 100%; padding: 16px; background: var(--cyan); color: #000; font-weight: 700; border: none; border-radius: 15px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; font-size: 14px; }
         .btn:hover { background: #fff; transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
         .back-btn { position: fixed; top: 20px; left: 20px; background: var(--glass); padding: 10px 20px; border-radius: 30px; color: var(--cyan); text-decoration: none; border: 1px solid var(--glass-border); font-size: 14px; font-weight: 600; z-index: 1000; backdrop-filter: blur(10px); transition: 0.3s; }
@@ -47,9 +46,8 @@
         .portfolio-title { text-align: center; font-size: clamp(24px, 5vw, 32px); color: #00ff88; margin-bottom: 45px; font-weight: 700; }
         .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         .web-work-card { background: rgba(255,255,255,0.02); padding: 30px 20px; border-radius: 20px; border: 1px solid var(--glass-border); transition: 0.3s; text-align: center; }
-        .web-work-card:hover { border-color: #00ff88; background: rgba(0, 255, 136, 0.03); transform: translateY(-5px); }
         .web-work-card h4 { color: #fff; margin-bottom: 20px; font-size: 18px; }
-        .live-link { display: inline-block; text-decoration: none; color: #00ff88; border: 1px solid #00ff88; padding: 8px 22px; border-radius: 30px; font-weight: 600; font-size: 13px; transition: 0.3s; }
+        .live-link { display: inline-block; text-decoration: none; color: #00ff88; border: 1px solid #00ff88; padding: 8px 22px; border-radius: 30px; font-weight: 600; font-size: 13px; transition: 0.3s; cursor: pointer; }
         .live-link:hover { background: #00ff88; color: #000; }
         .no-data { text-align: center; color: #555; grid-column: 1 / -1; padding: 40px; }
     </style>
@@ -76,7 +74,7 @@
         </ul>
         <div class="order-form">
             <textarea id="msg-portfolio" class="order-input" placeholder="Share your name & profession..."></textarea>
-            <button onclick="orderWA('Website - Portfolio Plan', 'msg-portfolio')" class="btn">Order Now</button>
+            <button onclick="checkAuthAndOrder('Website - Portfolio Plan', 'msg-portfolio')" class="btn">Order Now</button>
         </div>
     </div>
 
@@ -92,7 +90,7 @@
         </ul>
         <div class="order-form">
             <textarea id="msg-business" class="order-input" placeholder="Tell us about your business..."></textarea>
-            <button onclick="orderWA('Website - Business Plan', 'msg-business')" class="btn">Order Now</button>
+            <button onclick="checkAuthAndOrder('Website - Business Plan', 'msg-business')" class="btn">Order Now</button>
         </div>
     </div>
 
@@ -108,7 +106,7 @@
         </ul>
         <div class="order-form">
             <textarea id="msg-admin" class="order-input" placeholder="Describe your admin needs..."></textarea>
-            <button onclick="orderWA('Website - Full Admin Plan', 'msg-admin')" class="btn">Order Now</button>
+            <button onclick="checkAuthAndOrder('Website - Full Admin Plan', 'msg-admin')" class="btn">Order Now</button>
         </div>
     </div>
 
@@ -124,7 +122,7 @@
         </ul>
         <div class="order-form">
             <textarea id="msg-hosting" class="order-input" placeholder="Mention your domain name (if any)..."></textarea>
-            <button onclick="orderWA('Website - Hosting Service', 'msg-hosting')" class="btn">Get Hosting</button>
+            <button onclick="checkAuthAndOrder('Website - Hosting Service', 'msg-hosting')" class="btn">Get Hosting</button>
         </div>
     </div>
 </div>
@@ -140,7 +138,6 @@
 <script>
     AOS.init({ duration: 1000, once: true });
 
-    // 1. Unified Firebase Configuration for averixcreativestudio
     const firebaseConfig = {
         apiKey: "AIzaSyCQ53VH7o3SoWYh1bsWmxJQreJJriYRtHc",
         authDomain: "averixcreativestudio.firebaseapp.com",
@@ -154,8 +151,16 @@
         firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.firestore();
+    const auth = firebase.auth();
 
-    // 2. Fetch Web Development Portfolio (Real-time sync)
+    let currentUser = null;
+
+    // Monitor Auth
+    auth.onAuthStateChanged(user => {
+        currentUser = user;
+        loadWebPortfolio(); 
+    });
+
     function loadWebPortfolio() {
         const display = document.getElementById('web-portfolio-display');
         
@@ -164,7 +169,7 @@
           .orderBy("timestamp", "desc")
           .onSnapshot(snapshot => {
             if (snapshot.empty) {
-                display.innerHTML = '<div class="no-data">We are currently working on new projects. Check back soon!</div>';
+                display.innerHTML = '<div class="no-data">We are currently working on new projects.</div>';
                 return;
             }
 
@@ -174,25 +179,34 @@
                 display.innerHTML += `
                     <div class="web-work-card" data-aos="zoom-in">
                         <h4>${item.title}</h4>
-                        <a href="${item.link}" target="_blank" class="live-link">Live Preview →</a>
+                        <a href="javascript:void(0)" onclick="secureWebLink('${item.link}')" class="live-link">Live Preview →</a>
                     </div>`;
             });
-        }, error => {
-            console.log("Firebase Portfolio Error: ", error);
-            display.innerHTML = '<div class="no-data">Unable to load projects at this time.</div>';
         });
     }
 
-    loadWebPortfolio();
+    // Secure Preview Link
+    function secureWebLink(link) {
+        if (currentUser) {
+            window.open(link, '_blank');
+        } else {
+            alert("🔒 Please Login to view our developed websites!");
+            window.location.href = "index.html";
+        }
+    }
 
-    // 3. WhatsApp Order Logic
-    function orderWA(planName, inputId) {
-        const userMsg = document.getElementById(inputId).value;
-        const phone = "919360436090"; 
-        const finalMsg = `Hello Averix Studio! 🌐 I'm interested in the *${planName}*.\n\n*Details:* ${userMsg || 'I would like to discuss this project.'}`;
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMsg)}`, '_blank');
+    // Secure Order Logic
+    function checkAuthAndOrder(planName, inputId) {
+        if (currentUser) {
+            const userMsg = document.getElementById(inputId).value;
+            const phone = "919360436090"; 
+            const finalMsg = `Hello Averix Studio! 🌐 I'm interested in the *${planName}*.\n\n*Details:* ${userMsg || 'I would like to discuss this project.'}`;
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMsg)}`, '_blank');
+        } else {
+            alert("🔒 Please Login to place an order for web development!");
+            window.location.href = "index.html";
+        }
     }
 </script>
-
 </body>
 </html>
