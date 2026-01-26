@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Averix Studio — 3D Motion & Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        /* Unga original design apdiye inga iruku */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        body { background: #000; color: #fff; overflow-x: hidden; }
+        .navbar { width: 100%; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); position: fixed; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0, 234, 255, 0.1); }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo img { height: 45px; }
+        .logo-text { font-size: 22px; font-weight: 700; color: #00eaff; text-shadow: 0 0 8px #00eaff; }
+        .menu { display: flex; align-items: center; gap: 20px; }
+        .menu a { color: #fff; font-size: 15px; text-decoration: none; transition: 0.3s; font-weight: 400; cursor: pointer; }
+        .menu a:hover { color: #00eaff; }
+        .btn-main { padding: 8px 20px; background: #ffcc00; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; transition: 0.3s; }
+        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 15px #ffcc00; }
+        .btn-admin { padding: 8px 20px; background: #00eaff; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; margin-right: 10px; }
+        .hero-section { position: relative; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        #bg-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+        .services-wrapper { background: #000; padding: 100px 5%; }
+        .section-heading { text-align: center; color: #00eaff; font-size: 40px; margin-bottom: 60px; text-shadow: 0 0 15px rgba(0, 234, 255, 0.5); }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .service-card { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; border: 1px solid rgba(0, 234, 255, 0.2); text-align: center; transition: 0.4s; backdrop-filter: blur(10px); }
+        .service-card:hover { transform: translateY(-10px); border-color: #00eaff; box-shadow: 0 10px 30px rgba(0, 234, 255, 0.2); }
+        .service-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+        .service-card h3 { font-size: 22px; color: #fff; }
+        .footer { padding: 40px 20px; text-align: center; background: #050505; border-top: 1px solid #111; }
+        .footer p { color: #666; font-size: 13px; margin-bottom: 5px; }
+        #auth-section { display: flex; align-items: center; gap: 15px; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">
+        <img src="static/logo.jpg" alt="Logo">
+        <div class="logo-text">Averix Studio</div>
+    </div>
+    <div class="menu">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+
+        <div id="auth-section">
+            <a id="login-btn" onclick="login()" class="btn-main">LOGIN</a>
+            <a id="dashboard-btn" href="dashboard.html" class="btn-admin hidden">DASHBOARD</a>
+            <span id="user-name" style="color: #ffcc00; font-size: 14px;" class="hidden"></span>
+            <a id="logout-btn" onclick="logout()" style="color:#ff4d4d" class="hidden">Logout</a>
+        </div>
+    </div>
+</div>
+
+<div class="hero-section">
+    <video autoplay muted loop id="bg-video">
+        <source src="static/bg.mp4" type="video/mp4">
+    </video>
+    <h1 style="z-index: 1; font-size: 50px; text-align: center; text-transform: uppercase; color: #00eaff; text-shadow: 0 0 20px #00eaff;">Creative Excellence</h1>
+</div>
+
+<div class="services-wrapper">
+    <h2 class="section-heading">Our Creative Services</h2>
+    <div class="services-grid">
+        <a href="animation.html" style="text-decoration:none;">
+            <div class="service-card">
+                <img src="static/animation.jpg" alt="Animation">
+                <h3>Animation</h3>
+            </div>
+        </a>
+        <a href="pencil.html" style="text-decoration:none;">
+            <div class="service-card">
+                <img src="static/pencil.jpg" alt="Pencil Arts">
+                <h3>Pencil Arts</h3>
+            </div>
+        </a>
+        <a href="websites.html" style="text-decoration:none;">
+            <div class="service-card">
+                <img src="static/web.jpg" alt="Website Design">
+                <h3>Website Design</h3>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="footer">
+    <p>📧 averixstudioofficial@gmail.com</p>
+    <p>📞 +91 93604 36090 | +91 86950 02297 | +91 90256 52212 | +91 93451 38809</p>
+    <p>© 2025 Averix Studio — All Rights Reserved.</p>
+</div>
+
+<script>
+// 1. Puthiya Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCQ53VH7o3SoWYh1bsWmxJQreJJriYRtHc",
+    authDomain: "averixcreativestudio.firebaseapp.com",
+    projectId: "averixcreativestudio",
+    storageBucket: "averixcreativestudio.firebasestorage.app",
+    messagingSenderId: "963089827741",
+    appId: "1:963089827741:web:72b01b209a4785e1f51174"
+  };
+
+  // 2. Initialize Firebase (Correct Way)
+  if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // Admin List
+  const adminList = ["santhoshwebworker@gmail.com", "averixstudioofficial@gmail.com"];
+
+    // Login function
+    function login() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider).catch(err => alert(err.message));
+    }
+
+    // Logout function
+    function logout() {
+        auth.signOut();
+    }
+
+    // Monitor Auth Changes
+    auth.onAuthStateChanged(user => {
+        const loginBtn = document.getElementById('login-btn');
+        const dashboardBtn = document.getElementById('dashboard-btn');
+        const userName = document.getElementById('user-name');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        if (user) {
+            loginBtn.classList.add('hidden');
+            userName.classList.remove('hidden');
+            logoutBtn.classList.remove('hidden');
+            userName.innerText = "Hi, " + user.displayName.split(' ')[0];
+
+            if (adminList.includes(user.email)) {
+                dashboardBtn.classList.remove('hidden');
+            }
+        } else {
+            loginBtn.classList.remove('hidden');
+            dashboardBtn.classList.add('hidden');
+            userName.classList.add('hidden');
+            logoutBtn.classList.add('hidden');
+        }
+    });
+
+    // 3. Firestore Logic to fetch Portfolio (Use this in child pages)
+    // Intha logic Animation/Web/Pencil pages-la auto-load panna help pannum
+    function fetchPortfolioData(category, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        db.collection("portfolio")
+          .where("category", "==", category)
+          .orderBy("timestamp", "desc")
+          .get()
+          .then((querySnapshot) => {
+              container.innerHTML = ""; // Clear existing dummy content
+              querySnapshot.forEach((doc) => {
+                  const data = doc.data();
+                  container.innerHTML += `
+                      <div class="art-card">
+                          <h4>${data.title}</h4>
+                          <a href="${data.link}" target="_blank" class="view-art-btn">View Work →</a>
+                      </div>
+                  `;
+              });
+          })
+          .catch((error) => console.log("Error getting documents: ", error));
+    }
+</script>
+
+</body>
+</html>

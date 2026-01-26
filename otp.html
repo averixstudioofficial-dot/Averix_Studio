@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Averix Studio — OTP Verification</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+    }
+
+    body {
+        background: black;
+        overflow: hidden;
+    }
+
+    /* Background Video */
+    #bg-video {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        object-fit: cover;
+        z-index: -3;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(6px);
+        z-index: -2;
+    }
+
+    /* Floating particles */
+    .particle {
+        position: fixed;
+        width: 6px;
+        height: 6px;
+        background: #00eaff;
+        opacity: 0.5;
+        border-radius: 50%;
+        animation: float 8s infinite linear;
+        z-index: -1;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0) }
+        100% { transform: translateY(-130vh) scale(0) }
+    }
+
+    /* OTP BOX */
+    .otp-box {
+        width: 420px;
+        padding: 35px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 18px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    .title {
+        font-size: 32px;
+        color: #00eaff;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-shadow: 0 0 15px #00eaff;
+    }
+
+    .desc {
+        color: white;
+        font-size: 16px;
+        margin-bottom: 25px;
+        opacity: 0.8;
+    }
+
+    .otp-input {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .otp-input input {
+        width: 55px;
+        height: 55px;
+        font-size: 26px;
+        text-align: center;
+        border-radius: 12px;
+        border: none;
+        background: rgba(255,255,255,0.15);
+        color: white;
+        outline: none;
+    }
+
+    .btn-main {
+        width: 100%;
+        padding: 14px;
+        background: #ffcc00;
+        color: black;
+        font-weight: 700;
+        border: none;
+        margin-top: 25px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .resend {
+        margin-top: 15px;
+        color: white;
+        font-size: 15px;
+    }
+
+    .resend a {
+        color: #00eaff;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+</style>
+</head>
+
+<body>
+
+<!-- BG Video -->
+<video autoplay muted loop id="bg-video">
+    <source src="/static/bg.mp4" type="video/mp4">
+</video>
+
+<div class="overlay"></div>
+
+<!-- Particles -->
+<script>
+for (let i = 0; i < 40; i++) {
+    let p = document.createElement("div");
+    p.classList.add("particle");
+    p.style.left = Math.random()*100 + "vw";
+    p.style.top = Math.random()*100 + "vh";
+    p.style.animationDuration = (5 + Math.random()*5) + "s";
+    document.body.appendChild(p);
+}
+</script>
+
+<div class="otp-box">
+
+    <div class="title">Verify OTP</div>
+    <div class="desc">We have sent a 6-digit OTP to your email</div>
+
+    <form method="POST" action="{{ verify_url }}" id="otpForm">
+
+        <!-- ✔ required for Flask -->
+        <input type="hidden" name="email" value="{{ email }}">
+
+        <!-- Final combined OTP -->
+        <input type="hidden" id="otp_final" name="otp">
+
+        <div class="otp-input">
+            <input type="text" maxlength="1" name="o1" required>
+            <input type="text" maxlength="1" name="o2" required>
+            <input type="text" maxlength="1" name="o3" required>
+            <input type="text" maxlength="1" name="o4" required>
+            <input type="text" maxlength="1" name="o5" required>
+            <input type="text" maxlength="1" name="o6" required>
+        </div>
+
+        <button class="btn-main" type="submit">Verify OTP</button>
+
+    </form>
+
+    <div class="resend">
+        Not received?
+        <a href="/resend_otp?email={{ email }}">Resend OTP</a>
+    </div>
+
+</div>
+
+<!-- Auto-join OTP -->
+<script>
+let inputs = document.querySelectorAll(".otp-input input");
+let otpFinal = document.getElementById("otp_final");
+let form = document.getElementById("otpForm");
+
+inputs.forEach((input, index) => {
+    input.addEventListener("input", () => {
+        if (input.value.match(/[0-9]/)) {
+            if (index < inputs.length - 1) inputs[index + 1].focus();
+        } else {
+            input.value = "";
+        }
+    });
+
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && index > 0 && !input.value) {
+            inputs[index - 1].focus();
+        }
+    });
+});
+
+form.addEventListener("submit", () => {
+    otpFinal.value =
+        inputs[0].value +
+        inputs[1].value +
+        inputs[2].value +
+        inputs[3].value +
+        inputs[4].value +
+        inputs[5].value;
+});
+</script>
+
+</body>
+</html>

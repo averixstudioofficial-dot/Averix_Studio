@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Averix Studio — Admin Control Panel</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Unga original CSS - Design mathala */
+        :root {
+            --cyan: #00eaff;
+            --gold: #ffcc00;
+            --bg-dark: #000;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        body { background: var(--bg-dark); color: #fff; overflow-x: hidden; line-height: 1.6; }
+        .navbar { width: 100%; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); position: fixed; top: 0; z-index: 1000; border-bottom: 1px solid var(--cyan); }
+        .logo-text { font-size: 22px; font-weight: 700; color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+        .user-badge { background: rgba(0, 234, 255, 0.05); padding: 8px 18px; border-radius: 30px; border: 1px solid var(--cyan); color: var(--cyan); font-size: 13px; font-weight: 600; }
+        .dash-hero { height: 30vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at center, rgba(0, 234, 255, 0.08), #000); padding-top: 60px; text-align: center; }
+        .dash-hero h1 { font-size: clamp(24px, 5vw, 36px); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; color: #fff; }
+        .dash-hero p { color: var(--cyan); opacity: 0.8; font-size: 14px; letter-spacing: 1px; }
+        .content-wrapper { padding: 40px 5%; max-width: 1400px; margin: auto; }
+        .upload-section { background: var(--glass); border-radius: 25px; border: 1px solid var(--cyan); padding: 30px; margin-bottom: 40px; backdrop-filter: blur(10px); }
+        .upload-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+        .upload-form input, .upload-form select { padding: 14px; border-radius: 12px; border: 1px solid #333; background: #111; color: white; outline: none; transition: 0.3s; }
+        .upload-form input:focus { border-color: var(--cyan); }
+        .upload-form button { background: var(--cyan); color: #000; border: none; font-weight: 700; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .upload-form button:hover { background: #fff; transform: scale(1.02); box-shadow: 0 0 20px var(--cyan); }
+        .section-box { background: var(--glass); border-radius: 25px; border: 1px solid var(--glass-border); padding: 30px; margin-bottom: 35px; overflow: hidden; }
+        .section-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .section-header h3 { color: var(--gold); font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .table-container { width: 100%; overflow-x: auto; border-radius: 15px; }
+        table { width: 100%; border-collapse: collapse; min-width: 850px; }
+        th { background: rgba(0, 234, 255, 0.08); color: var(--cyan); text-align: left; padding: 18px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 18px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; color: #ddd; vertical-align: middle; }
+        .done-btn { background: #00ff88; color: #000; border: none; padding: 8px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .del-btn { background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 8px 20px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.3s; }
+        .link-text { color: var(--cyan); text-decoration: none; font-size: 13px; font-weight: 600; }
+        .footer-links { margin: 50px 0; text-align: center; }
+        .footer-links a { margin: 0 20px; text-decoration: none; font-weight: 600; color: #666; transition: 0.3s; font-size: 14px; }
+        .footer-links a:hover { color: var(--cyan); }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo-text">Averix Studio <span style="font-weight:300; color:#fff; opacity: 0.5;">| Admin</span></div>
+    <div id="admin-mail" class="user-badge">Verifying Admin...</div>
+</div>
+
+<div class="dash-hero">
+    <h1>Control Center</h1>
+    <p>MANAGE YOUR CREATIVE EMPIRE</p>
+</div>
+
+<div class="content-wrapper">
+
+    <div class="upload-section">
+        <h3 style="margin-bottom: 20px; color: var(--cyan); font-weight: 700;">🚀 Upload New Project</h3>
+        <div class="upload-form">
+            <select id="proj-category" required>
+                <option value="" disabled selected>Project Category</option>
+                <option value="Animation">3D/2D Animation</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Pencil Art">Art & Sketches</option>
+            </select>
+            <input type="text" id="proj-title" placeholder="Project Title" required>
+            <input type="text" id="proj-link" placeholder="Work Link (URL)" required>
+            <button onclick="addPortfolio()">Publish Work</button>
+        </div>
+    </div>
+
+    <div class="section-box">
+        <div class="section-header">
+            <h3>📩 Client Requests</h3>
+            <span id="order-count" style="font-size: 12px; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 10px; color: #888;">Active: 0</span>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Project Brief</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section-box">
+        <div class="section-header">
+            <h3 style="color: #00ff88;">📁 Live Portfolio</h3>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Project Name</th>
+                        <th>URL / Source</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody id="portfolio-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer-links">
+        <a href="index.html">← Go to Website</a>
+        <span style="color: #333;">|</span>
+        <a href="#" onclick="logout()" style="color: #ff4d4d;">Secure Logout</a>
+    </div>
+</div>
+
+<script>
+    // 1. Correct Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyCQ53VH7o3SoWYh1bsWmxJQreJJriYRtHc",
+        authDomain: "averixcreativestudio.firebaseapp.com",
+        projectId: "averixcreativestudio",
+        storageBucket: "averixcreativestudio.firebasestorage.app",
+        messagingSenderId: "963089827741",
+        appId: "1:963089827741:web:72b01b209a4785e1f51174"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const adminList = ["santhoshwebworker@gmail.com", "averixstudioofficial@gmail.com"];
+
+    // 2. Auth Check
+    auth.onAuthStateChanged(user => {
+        if (user && adminList.includes(user.email)) {
+            document.getElementById('admin-mail').innerText = "Logged in: " + user.email;
+            loadOrders();
+            loadPortfolio();
+        } else {
+            alert("Unauthorized Access!");
+            window.location.href = "login.html";
+        }
+    });
+
+    // 3. Add Portfolio Logic
+    function addPortfolio() {
+        const cat = document.getElementById('proj-category').value;
+        const title = document.getElementById('proj-title').value;
+        const link = document.getElementById('proj-link').value;
+
+        if(!cat || !title || !link) return alert("Fill all fields!");
+
+        db.collection("portfolio").add({
+            category: cat,
+            title: title,
+            link: link,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            alert("Project Published!");
+            document.getElementById('proj-title').value = "";
+            document.getElementById('proj-link').value = "";
+        });
+    }
+
+    // 4. Load Orders
+    function loadOrders() {
+        db.collection("enquiries").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+            const list = document.getElementById('orders-list');
+            document.getElementById('order-count').innerText = "Active: " + snapshot.size;
+            list.innerHTML = "";
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const date = data.timestamp ? data.timestamp.toDate().toLocaleString() : "Just now";
+                list.innerHTML += `
+                    <tr>
+                        <td style="color: #666; font-size: 12px;">${date}</td>
+                        <td style="max-width: 450px; font-size: 13px; color: #bbb;">${data.message}</td>
+                        <td><button class="done-btn" onclick="deleteDoc('enquiries', '${doc.id}')">COMPLETE</button></td>
+                    </tr>`;
+            });
+        });
+    }
+
+    // 5. Load Portfolio
+    function loadPortfolio() {
+        db.collection("portfolio").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+            const list = document.getElementById('portfolio-list');
+            list.innerHTML = "";
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                list.innerHTML += `
+                    <tr>
+                        <td><b style="color: var(--cyan);">${data.category}</b></td>
+                        <td style="font-weight: 600;">${data.title}</td>
+                        <td><a href="${data.link}" target="_blank" class="link-text">Preview Work →</a></td>
+                        <td><button class="del-btn" onclick="deleteDoc('portfolio', '${doc.id}')">REMOVE</button></td>
+                    </tr>`;
+            });
+        });
+    }
+
+    // 6. Delete Helper
+    function deleteDoc(col, id) {
+        if(confirm("Are you sure?")) {
+            db.collection(col).doc(id).delete();
+        }
+    }
+
+    function logout() { auth.signOut().then(() => window.location.href="login.html"); }
+</script>
+
+</body>
+</html>
