@@ -15,10 +15,8 @@
     <meta property="og:description" content="Professional 3D Animation, Web Design, and Pencil Art Studio.">
     <meta property="og:url" content="https://averixcreativestudio.netlify.app/">
 
-    <meta name="description" content="Averix Creative Studio - Specializing in 3D/2D Animation, Web Development, and Professional Pencil Art. Explore our creative portfolio.">
-    <meta name="keywords" content="Averix Studio, Animation, Web Design, Pencil Art, Creative Studio Chennai">
-    <meta name="author" content="Averix Creative Studio">
-
+    <meta name="description" content="Averix Creative Studio - Specializing in 3D/2D Animation, Web Development, and Professional Pencil Art.">
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -29,79 +27,91 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
         body { background: #000; color: #fff; overflow-x: hidden; }
 
-        /* --- Navbar Fix --- */
+        /* --- Navbar --- */
         .navbar { 
             width: 100%; 
-            padding: 10px 5%; 
+            padding: 15px 5%; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            background: rgba(0,0,0,0.85); 
+            background: rgba(0,0,0,0.9); 
             backdrop-filter: blur(15px); 
             position: fixed; 
             top: 0; 
-            z-index: 1000; 
+            z-index: 2000; 
             border-bottom: 1px solid rgba(0, 234, 255, 0.2); 
         }
-        .logo { display: flex; align-items: center; gap: 10px; }
-        .logo img { height: 35px; border-radius: 5px; } /* Mobile friendly height */
-        .logo-text { font-size: 18px; font-weight: 700; color: #00eaff; text-shadow: 0 0 8px #00eaff; }
-        
-        .menu { display: flex; align-items: center; gap: 15px; }
-        .menu a { color: #fff; font-size: 13px; text-decoration: none; transition: 0.3s; font-weight: 400; }
+        .logo { display: flex; align-items: center; gap: 10px; z-index: 2001; }
+        .logo img { height: 40px; border-radius: 5px; }
+        .logo-text { font-size: 20px; font-weight: 700; color: #00eaff; text-shadow: 0 0 8px #00eaff; }
+
+        /* --- Desktop Menu --- */
+        .menu { display: flex; align-items: center; gap: 25px; transition: 0.4s ease; }
+        .menu a { color: #fff; text-decoration: none; font-size: 15px; transition: 0.3s; font-weight: 400; }
         .menu a:hover { color: #00eaff; }
 
-        .btn-main { padding: 6px 15px; background: #ffcc00; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; font-size: 12px; }
-        .btn-admin { padding: 6px 15px; background: #00eaff; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; font-size: 12px; }
+        /* --- Hamburger Icon --- */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 2001;
+        }
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #00eaff;
+            border-radius: 3px;
+            transition: 0.3s;
+        }
 
-        /* --- Hero Section Fix --- */
-        .hero-section { 
-            position: relative; 
-            width: 100%; 
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            overflow: hidden; 
+        /* --- Buttons --- */
+        .btn-main { padding: 8px 20px; background: #ffcc00; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; font-size: 13px; }
+        .btn-admin { padding: 8px 20px; background: #00eaff; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; font-size: 13px; }
+
+        /* --- Mobile Responsive Logic --- */
+        @media (max-width: 850px) {
+            .hamburger { display: flex; }
+            .menu {
+                position: fixed;
+                top: -100vh;
+                left: 0;
+                width: 100%;
+                height: auto;
+                background: rgba(0, 0, 0, 0.95);
+                flex-direction: column;
+                padding: 100px 0 40px;
+                text-align: center;
+                gap: 20px;
+                border-bottom: 2px solid #00eaff;
+                z-index: 1000;
+                visibility: hidden;
+            }
+            .menu.active {
+                top: 0;
+                visibility: visible;
+            }
+            #auth-section { flex-direction: column; gap: 15px; }
         }
+
+        /* --- Hero Section --- */
+        .hero-section { position: relative; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         #bg-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.8; }
-        
-        .hero-title { 
-            z-index: 1; 
-            font-size: clamp(30px, 10vw, 60px); /* Adjusts size based on screen */
-            text-align: center; 
-            text-transform: uppercase; 
-            color: #00eaff; 
-            text-shadow: 0 0 20px #00eaff; 
-            padding: 0 20px;
-            font-weight: 800;
-        }
+        .hero-title { z-index: 1; font-size: clamp(32px, 10vw, 60px); text-align: center; text-transform: uppercase; color: #00eaff; text-shadow: 0 0 20px #00eaff; padding: 0 20px; font-weight: 800; }
 
         /* --- Services --- */
         .services-wrapper { background: #000; padding: 80px 5%; }
-        .section-heading { text-align: center; color: #00eaff; font-size: 32px; margin-bottom: 40px; text-shadow: 0 0 15px rgba(0, 234, 255, 0.5); }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .section-heading { text-align: center; color: #00eaff; font-size: 32px; margin-bottom: 40px; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
         .service-card { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; border: 1px solid rgba(0, 234, 255, 0.1); text-align: center; transition: 0.4s; backdrop-filter: blur(10px); }
-        .service-card:hover { transform: translateY(-5px); border-color: #00eaff; }
-        .service-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+        .service-card:hover { transform: translateY(-8px); border-color: #00eaff; }
+        .service-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
 
-        /* --- Footer --- */
-        .footer { padding: 40px 20px; text-align: center; background: #050505; border-top: 1px solid #111; font-size: 12px; }
-        .footer p { color: #888; margin-bottom: 10px; }
-
-        #auth-section { display: flex; align-items: center; gap: 10px; }
+        .footer { padding: 40px 20px; text-align: center; background: #050505; border-top: 1px solid #111; font-size: 13px; }
+        #auth-section { display: flex; align-items: center; gap: 15px; }
         .hidden { display: none !important; }
-
-        /* --- MOBILE SPECIFIC CSS --- */
-        @media (max-width: 600px) {
-            .navbar { padding: 10px 3%; }
-            .logo-text { font-size: 15px; }
-            .menu { gap: 8px; }
-            .menu a { font-size: 11px; }
-            .btn-main, .btn-admin { padding: 5px 10px; font-size: 10px; }
-            .hero-title { font-size: 35px; line-height: 1.2; }
-            .logo img { height: 30px; }
-        }
     </style>
 </head>
 <body>
@@ -111,16 +121,23 @@
         <img src="static/logo.jpg" alt="Logo">
         <div class="logo-text">Averix Studio</div>
     </div>
-    <div class="menu">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
+
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="menu" id="navMenu">
+        <a href="index.html" onclick="toggleMenu()">Home</a>
+        <a href="about.html" onclick="toggleMenu()">About</a>
+        <a href="contact.html" onclick="toggleMenu()">Contact</a>
 
         <div id="auth-section">
             <a id="login-btn" onclick="login()" class="btn-main">LOGIN</a>
             <a id="dashboard-btn" href="dashboard.html" class="btn-admin hidden">DASHBOARD</a>
-            <span id="user-name" style="color: #ffcc00; font-size: 11px;" class="hidden"></span>
-            <a id="logout-btn" onclick="logout()" style="color:#ff4d4d; font-size: 11px; cursor:pointer;" class="hidden">Logout</a>
+            <span id="user-name" style="color: #ffcc00; font-size: 14px;" class="hidden"></span>
+            <a id="logout-btn" onclick="logout()" style="color:#ff4d4d; cursor:pointer; font-size: 14px;" class="hidden">Logout</a>
         </div>
     </div>
 </div>
@@ -163,6 +180,17 @@
 </div>
 
 <script>
+  // 1. Menu Toggle Logic
+  function toggleMenu() {
+      const menu = document.getElementById('navMenu');
+      const hamburger = document.getElementById('hamburger');
+      menu.classList.toggle('active');
+      
+      // Animation for hamburger (optional but cool)
+      hamburger.classList.toggle('open');
+  }
+
+  // 2. Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyCQ53VH7o3SoWYh1bsWmxJQreJJriYRtHc",
     authDomain: "averixcreativestudio.firebaseapp.com",
