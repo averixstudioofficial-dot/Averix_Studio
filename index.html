@@ -26,32 +26,82 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <style>
-        /* Unga original design apdiye inga iruku */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
         body { background: #000; color: #fff; overflow-x: hidden; }
-        .navbar { width: 100%; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); position: fixed; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0, 234, 255, 0.1); }
+
+        /* --- Navbar Fix --- */
+        .navbar { 
+            width: 100%; 
+            padding: 10px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(0,0,0,0.85); 
+            backdrop-filter: blur(15px); 
+            position: fixed; 
+            top: 0; 
+            z-index: 1000; 
+            border-bottom: 1px solid rgba(0, 234, 255, 0.2); 
+        }
         .logo { display: flex; align-items: center; gap: 10px; }
-        .logo img { height: 45px; }
-        .logo-text { font-size: 22px; font-weight: 700; color: #00eaff; text-shadow: 0 0 8px #00eaff; }
-        .menu { display: flex; align-items: center; gap: 20px; }
-        .menu a { color: #fff; font-size: 15px; text-decoration: none; transition: 0.3s; font-weight: 400; cursor: pointer; }
+        .logo img { height: 35px; border-radius: 5px; } /* Mobile friendly height */
+        .logo-text { font-size: 18px; font-weight: 700; color: #00eaff; text-shadow: 0 0 8px #00eaff; }
+        
+        .menu { display: flex; align-items: center; gap: 15px; }
+        .menu a { color: #fff; font-size: 13px; text-decoration: none; transition: 0.3s; font-weight: 400; }
         .menu a:hover { color: #00eaff; }
-        .btn-main { padding: 8px 20px; background: #ffcc00; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; transition: 0.3s; cursor: pointer; }
-        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 15px #ffcc00; }
-        .btn-admin { padding: 8px 20px; background: #00eaff; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; margin-right: 10px; }
-        .hero-section { position: relative; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        #bg-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
-        .services-wrapper { background: #000; padding: 100px 5%; }
-        .section-heading { text-align: center; color: #00eaff; font-size: 40px; margin-bottom: 60px; text-shadow: 0 0 15px rgba(0, 234, 255, 0.5); }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .service-card { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; border: 1px solid rgba(0, 234, 255, 0.2); text-align: center; transition: 0.4s; backdrop-filter: blur(10px); }
-        .service-card:hover { transform: translateY(-10px); border-color: #00eaff; box-shadow: 0 10px 30px rgba(0, 234, 255, 0.2); }
-        .service-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
-        .service-card h3 { font-size: 22px; color: #fff; }
-        .footer { padding: 40px 20px; text-align: center; background: #050505; border-top: 1px solid #111; }
-        .footer p { color: #666; font-size: 13px; margin-bottom: 5px; }
-        #auth-section { display: flex; align-items: center; gap: 15px; }
+
+        .btn-main { padding: 6px 15px; background: #ffcc00; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; font-size: 12px; }
+        .btn-admin { padding: 6px 15px; background: #00eaff; color: black; font-weight: 700; border-radius: 30px; text-decoration: none; font-size: 12px; }
+
+        /* --- Hero Section Fix --- */
+        .hero-section { 
+            position: relative; 
+            width: 100%; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+        }
+        #bg-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.8; }
+        
+        .hero-title { 
+            z-index: 1; 
+            font-size: clamp(30px, 10vw, 60px); /* Adjusts size based on screen */
+            text-align: center; 
+            text-transform: uppercase; 
+            color: #00eaff; 
+            text-shadow: 0 0 20px #00eaff; 
+            padding: 0 20px;
+            font-weight: 800;
+        }
+
+        /* --- Services --- */
+        .services-wrapper { background: #000; padding: 80px 5%; }
+        .section-heading { text-align: center; color: #00eaff; font-size: 32px; margin-bottom: 40px; text-shadow: 0 0 15px rgba(0, 234, 255, 0.5); }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .service-card { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; border: 1px solid rgba(0, 234, 255, 0.1); text-align: center; transition: 0.4s; backdrop-filter: blur(10px); }
+        .service-card:hover { transform: translateY(-5px); border-color: #00eaff; }
+        .service-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+
+        /* --- Footer --- */
+        .footer { padding: 40px 20px; text-align: center; background: #050505; border-top: 1px solid #111; font-size: 12px; }
+        .footer p { color: #888; margin-bottom: 10px; }
+
+        #auth-section { display: flex; align-items: center; gap: 10px; }
         .hidden { display: none !important; }
+
+        /* --- MOBILE SPECIFIC CSS --- */
+        @media (max-width: 600px) {
+            .navbar { padding: 10px 3%; }
+            .logo-text { font-size: 15px; }
+            .menu { gap: 8px; }
+            .menu a { font-size: 11px; }
+            .btn-main, .btn-admin { padding: 5px 10px; font-size: 10px; }
+            .hero-title { font-size: 35px; line-height: 1.2; }
+            .logo img { height: 30px; }
+        }
     </style>
 </head>
 <body>
@@ -69,17 +119,17 @@
         <div id="auth-section">
             <a id="login-btn" onclick="login()" class="btn-main">LOGIN</a>
             <a id="dashboard-btn" href="dashboard.html" class="btn-admin hidden">DASHBOARD</a>
-            <span id="user-name" style="color: #ffcc00; font-size: 14px;" class="hidden"></span>
-            <a id="logout-btn" onclick="logout()" style="color:#ff4d4d; cursor:pointer;" class="hidden">Logout</a>
+            <span id="user-name" style="color: #ffcc00; font-size: 11px;" class="hidden"></span>
+            <a id="logout-btn" onclick="logout()" style="color:#ff4d4d; font-size: 11px; cursor:pointer;" class="hidden">Logout</a>
         </div>
     </div>
 </div>
 
 <div class="hero-section">
-    <video autoplay muted loop id="bg-video">
+    <video autoplay muted loop playsinline id="bg-video">
         <source src="static/bg.mp4" type="video/mp4">
     </video>
-    <h1 style="z-index: 1; font-size: 50px; text-align: center; text-transform: uppercase; color: #00eaff; text-shadow: 0 0 20px #00eaff;">Creative Excellence</h1>
+    <h1 class="hero-title">Creative Excellence</h1>
 </div>
 
 <div class="services-wrapper">
@@ -108,12 +158,11 @@
 
 <div class="footer">
     <p>📧 averixstudioofficial@gmail.com</p>
-    <p>📞 +91 93604 36090 | +91 86950 02297 | +91 90256 52212 | +91 93451 38809</p>
+    <p>📞 +91 93604 36090</p>
     <p>© 2026 Averix Studio — All Rights Reserved.</p>
 </div>
 
 <script>
-  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyCQ53VH7o3SoWYh1bsWmxJQreJJriYRtHc",
     authDomain: "averixcreativestudio.firebaseapp.com",
@@ -123,28 +172,17 @@
     appId: "1:963089827741:web:72b01b209a4785e1f51174"
   };
 
-  // Initialize Firebase
-  if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-  }
+  if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  // Admin List
   const adminList = ["santhoshwebworker@gmail.com", "averixstudioofficial@gmail.com"];
 
-  // Login function with Google
   function login() {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider).catch(err => alert(err.message));
   }
 
-  // Logout function
-  function logout() {
-      auth.signOut();
-  }
+  function logout() { auth.signOut(); }
 
-  // Monitor Auth Changes
   auth.onAuthStateChanged(user => {
       const loginBtn = document.getElementById('login-btn');
       const dashboardBtn = document.getElementById('dashboard-btn');
@@ -156,11 +194,7 @@
           userName.classList.remove('hidden');
           logoutBtn.classList.remove('hidden');
           userName.innerText = "Hi, " + user.displayName.split(' ')[0];
-
-          // Admin check to show dashboard button
-          if (adminList.includes(user.email)) {
-              dashboardBtn.classList.remove('hidden');
-          }
+          if (adminList.includes(user.email)) { dashboardBtn.classList.remove('hidden'); }
       } else {
           loginBtn.classList.remove('hidden');
           dashboardBtn.classList.add('hidden');
@@ -169,6 +203,5 @@
       }
   });
 </script>
-
 </body>
 </html>
