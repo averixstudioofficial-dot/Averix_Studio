@@ -50,6 +50,39 @@
         .live-link { display: inline-block; text-decoration: none; color: #00ff88; border: 1px solid #00ff88; padding: 8px 22px; border-radius: 30px; font-weight: 600; font-size: 13px; transition: 0.3s; cursor: pointer; }
         .live-link:hover { background: #00ff88; color: #000; }
         .no-data { text-align: center; color: #555; grid-column: 1 / -1; padding: 40px; }
+        
+        /* Success Message Styles */
+        .success-message {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 350px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .success-message.show {
+            transform: translateX(0);
+        }
+        .success-message h4 {
+            margin-bottom: 5px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .success-message p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -74,7 +107,7 @@
         </ul>
         <div class="order-form">
             <textarea id="msg-portfolio" class="order-input" placeholder="Share your name & profession..."></textarea>
-            <button onclick="checkAuthAndOrder('Website - Portfolio Plan', 'msg-portfolio')" class="btn">Order Now</button>
+            <button onclick="checkAuthAndOrder('Website - Portfolio Plan', 'msg-portfolio')" class="btn">Send Inquiry via Email</button>
         </div>
     </div>
 
@@ -85,12 +118,12 @@
             <li>Up to 5 Pages</li>
             <li>Product/Service Gallery</li>
             <li>SEO Friendly Setup</li>
-            <li>WhatsApp Chat Integration</li>
+            <li>Email Contact Integration</li>
             <li>Domain Setup Assistance</li>
         </ul>
         <div class="order-form">
             <textarea id="msg-business" class="order-input" placeholder="Tell us about your business..."></textarea>
-            <button onclick="checkAuthAndOrder('Website - Business Plan', 'msg-business')" class="btn">Order Now</button>
+            <button onclick="checkAuthAndOrder('Website - Business Plan', 'msg-business')" class="btn">Send Inquiry via Email</button>
         </div>
     </div>
 
@@ -100,13 +133,13 @@
         <ul class="features">
             <li>Custom Admin Dashboard</li>
             <li>Database Management</li>
-            <li>User Authentication (OTP)</li>
+            <li>User Authentication System</li>
             <li>Order Management System</li>
             <li>Dynamic Content Control</li>
         </ul>
         <div class="order-form">
             <textarea id="msg-admin" class="order-input" placeholder="Describe your admin needs..."></textarea>
-            <button onclick="checkAuthAndOrder('Website - Full Admin Plan', 'msg-admin')" class="btn">Order Now</button>
+            <button onclick="checkAuthAndOrder('Website - Full Admin Plan', 'msg-admin')" class="btn">Send Inquiry via Email</button>
         </div>
     </div>
 
@@ -116,13 +149,13 @@
         <ul class="features">
             <li>99.9% Server Uptime</li>
             <li>SSL Certificate (HTTPS)</li>
-            <li>Professional Email</li>
+            <li>Professional Email Setup</li>
             <li>Daily Backups</li>
             <li>24/7 Technical Support</li>
         </ul>
         <div class="order-form">
             <textarea id="msg-hosting" class="order-input" placeholder="Mention your domain name (if any)..."></textarea>
-            <button onclick="checkAuthAndOrder('Website - Hosting Service', 'msg-hosting')" class="btn">Get Hosting</button>
+            <button onclick="checkAuthAndOrder('Website - Hosting Service', 'msg-hosting')" class="btn">Get Hosting Inquiry</button>
         </div>
     </div>
 </div>
@@ -195,17 +228,61 @@
         }
     }
 
-    // Secure Order Logic
+    // Email Contact Function
     function checkAuthAndOrder(planName, inputId) {
         if (currentUser) {
             const userMsg = document.getElementById(inputId).value;
-            const phone = "919360436090"; 
-            const finalMsg = `Hello Averix Studio! 🌐 I'm interested in the *${planName}*.\n\n*Details:* ${userMsg || 'I would like to discuss this project.'}`;
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMsg)}`, '_blank');
+            
+            // Your company email
+            const companyEmail = "averixstudioofficial@gmail.com"; // Replace with your actual email
+            const emailSubject = `Inquiry: ${planName}`;
+            const emailBody = `Dear Averix Studio,\n\nI'm interested in the ${planName}.\n\nMy Requirements:\n${userMsg || 'I would like to discuss this project further.'}\n\nPlease contact me with more details.\n\nBest regards,\n[Your Name]`;
+            
+            // Create email link
+            const mailtoLink = `mailto:${companyEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+            
+            // Open user's email client
+            window.location.href = mailtoLink;
+            
+            // Show success message
+            showSuccessMessage("Email client opened!", "Please send your inquiry via email. We'll respond within 24 hours.");
+            
         } else {
-            alert("🔒 Please Login to place an order for web development!");
+            alert("🔒 Please Login to send an inquiry!");
             window.location.href = "index.html";
         }
+    }
+    
+    // Success message function
+    function showSuccessMessage(title, message) {
+        // Remove any existing success messages
+        const existingMsg = document.querySelector('.success-message');
+        if (existingMsg) existingMsg.remove();
+        
+        // Create new success message
+        const successMsg = document.createElement('div');
+        successMsg.className = 'success-message';
+        successMsg.innerHTML = `
+            <h4>✓ ${title}</h4>
+            <p>${message}</p>
+        `;
+        
+        document.body.appendChild(successMsg);
+        
+        // Show message with animation
+        setTimeout(() => {
+            successMsg.classList.add('show');
+        }, 10);
+        
+        // Hide message after 5 seconds
+        setTimeout(() => {
+            successMsg.classList.remove('show');
+            setTimeout(() => {
+                if (successMsg.parentNode) {
+                    successMsg.parentNode.removeChild(successMsg);
+                }
+            }, 500);
+        }, 5000);
     }
 </script>
 </body>
