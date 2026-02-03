@@ -6,13 +6,13 @@
     <title>Pencil Art — Averix Studio</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
+        /* Unga original CSS - No changes */
         :root {
             --gold: #ffcc00;
             --cyan: #00eaff;
@@ -43,56 +43,11 @@
         .art-card { background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: center; transition: 0.3s; }
         .art-card:hover { border-color: var(--gold); background: rgba(255, 204, 0, 0.03); }
         .art-card h4 { margin-bottom: 15px; color: #fff; font-size: 16px; }
-        .view-art-btn { display: inline-block; color: var(--cyan); text-decoration: none; border: 1px solid var(--cyan); padding: 6px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; transition: 0.3s; cursor: pointer; }
+        .view-art-btn { display: inline-block; color: var(--cyan); text-decoration: none; border: 1px solid var(--cyan); padding: 6px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; transition: 0.3s; }
         .view-art-btn:hover { background: var(--cyan); color: #000; }
         .no-data { text-align: center; color: #555; grid-column: 1 / -1; padding: 40px; }
         .frame-highlight { border: 2px solid var(--cyan) !important; background: rgba(0, 234, 255, 0.03); }
         .frame-highlight .btn { background: var(--cyan); }
-        
-        /* Success Message Styles */
-        .success-message {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: linear-gradient(135deg, #00b09b, #96c93d);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-            transform: translateX(150%);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-width: 350px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .success-message.show {
-            transform: translateX(0);
-        }
-        .success-message h4 {
-            margin-bottom: 5px;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .success-message p {
-            font-size: 13px;
-            opacity: 0.9;
-            margin: 0;
-        }
-        
-        /* Email Button Style */
-        .email-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .email-btn::before {
-            content: "✉️";
-            font-size: 16px;
-        }
     </style>
 </head>
 
@@ -114,7 +69,7 @@
         </ul>
         <div class="order-form">
             <textarea id="msg-single" class="order-input" placeholder="Mention photo details or custom notes..."></textarea>
-            <button onclick="checkAuthAndOrder('Pencil Art - Single Person', 'msg-single')" class="btn email-btn">Send Inquiry via Email</button>
+            <button onclick="orderWA('Pencil Art - Single Person', 'msg-single')" class="btn">Order Now</button>
         </div>
     </div>
 
@@ -129,7 +84,7 @@
         </ul>
         <div class="order-form">
             <textarea id="msg-multi" class="order-input" placeholder="How many persons in the photo?"></textarea>
-            <button onclick="checkAuthAndOrder('Pencil Art - Multiple Persons', 'msg-multi')" class="btn email-btn">Send Inquiry via Email</button>
+            <button onclick="orderWA('Pencil Art - Multiple Persons', 'msg-multi')" class="btn">Order Now</button>
         </div>
     </div>
 
@@ -144,7 +99,7 @@
         </ul>
         <div class="order-form">
             <textarea id="msg-frame" class="order-input" placeholder="Any specific frame color (Black/Brown/Gold)?"></textarea>
-            <button onclick="checkAuthAndOrder('Add-on: Premium Frame', 'msg-frame')" class="btn email-btn">Send Inquiry via Email</button>
+            <button onclick="orderWA('Add-on: Premium Frame', 'msg-frame')" class="btn">Add Frame</button>
         </div>
     </div>
 
@@ -159,7 +114,7 @@
         </ul>
         <div class="order-form">
             <textarea id="msg-colour" class="order-input" placeholder="Describe your photo and size..."></textarea>
-            <button onclick="checkAuthAndOrder('Colour Pencil Art', 'msg-colour')" class="btn email-btn">Send Inquiry via Email</button>
+            <button onclick="orderWA('Colour Pencil Art', 'msg-colour')" class="btn">Order Now</button>
         </div>
     </div>
 </div>
@@ -173,6 +128,7 @@
 <script>
     AOS.init({ duration: 1000, once: true });
 
+    // 1. Unified Firebase Configuration for averixcreativestudio
     const firebaseConfig = {
         apiKey: "AIzaSyCQ53VH7o3SoWYh1bsWmxJQreJJriYRtHc",
         authDomain: "averixcreativestudio.firebaseapp.com",
@@ -186,17 +142,8 @@
         firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.firestore();
-    const auth = firebase.auth();
 
-    let currentUser = null;
-
-    // Monitor Auth Status
-    auth.onAuthStateChanged(user => {
-        currentUser = user;
-        loadArtPortfolio(); 
-    });
-
-    // 1. Portfolio Loading with Secure Links
+    // 2. Load Pencil Art Portfolio (Filtered by Category)
     function loadArtPortfolio() {
         const display = document.getElementById('art-portfolio-display');
         
@@ -205,7 +152,7 @@
           .orderBy("timestamp", "desc")
           .onSnapshot(snapshot => {
             if (snapshot.empty) {
-                display.innerHTML = '<div class="no-data">No art samples uploaded yet.</div>';
+                display.innerHTML = '<div class="no-data">No art samples uploaded yet. New sketches coming soon!</div>';
                 return;
             }
 
@@ -215,78 +162,25 @@
                 display.innerHTML += `
                     <div class="art-card" data-aos="zoom-in">
                         <h4>${item.title}</h4>
-                        <a href="javascript:void(0)" onclick="secureArtLink('${item.link}')" class="view-art-btn">View Artwork →</a>
+                        <a href="${item.link}" target="_blank" class="view-art-btn">View Artwork →</a>
                     </div>`;
             });
+        }, error => {
+            console.error("Firebase Error: ", error);
+            display.innerHTML = '<div class="no-data">Unable to load artwork at this time.</div>';
         });
     }
 
-    // 2. Secure Link Redirect
-    function secureArtLink(link) {
-        if (currentUser) {
-            window.open(link, '_blank');
-        } else {
-            alert("🔒 Please Login to view our full pencil artworks!");
-            window.location.href = "index.html";
-        }
-    }
+    loadArtPortfolio();
 
-    // 3. Email Order Function
-    function checkAuthAndOrder(serviceName, inputId) {
-        if (currentUser) {
-            const userMsg = document.getElementById(inputId).value;
-            
-            // Your company email
-            const companyEmail = "averixstudioofficial@gmail.com";
-            const emailSubject = `Pencil Art Inquiry: ${serviceName}`;
-            const emailBody = `Dear Averix Studio,\n\nI'm interested in ordering: ${serviceName}.\n\nMy Requirements:\n${userMsg || 'I would like to discuss the portrait details.'}\n\nPlease contact me with more information about:\n- Payment process\n- Delivery time\n- Photo submission method\n\nBest regards,\n[Your Name]`;
-            
-            // Create email link
-            const mailtoLink = `mailto:${companyEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-            
-            // Open user's email client
-            window.location.href = mailtoLink;
-            
-            // Show success message
-            showSuccessMessage("Email client opened!", "Please send your inquiry via email. We'll respond within 24 hours.");
-            
-        } else {
-            alert("🔒 Please Login to send an inquiry!");
-            window.location.href = "index.html";
-        }
-    }
-    
-    // Success message function
-    function showSuccessMessage(title, message) {
-        // Remove any existing success messages
-        const existingMsg = document.querySelector('.success-message');
-        if (existingMsg) existingMsg.remove();
-        
-        // Create new success message
-        const successMsg = document.createElement('div');
-        successMsg.className = 'success-message';
-        successMsg.innerHTML = `
-            <h4>✉️ ${title}</h4>
-            <p>${message}</p>
-        `;
-        
-        document.body.appendChild(successMsg);
-        
-        // Show message with animation
-        setTimeout(() => {
-            successMsg.classList.add('show');
-        }, 10);
-        
-        // Hide message after 5 seconds
-        setTimeout(() => {
-            successMsg.classList.remove('show');
-            setTimeout(() => {
-                if (successMsg.parentNode) {
-                    successMsg.parentNode.removeChild(successMsg);
-                }
-            }, 500);
-        }, 5000);
+    // 3. WhatsApp Order Logic
+    function orderWA(serviceName, inputId) {
+        const userMsg = document.getElementById(inputId).value;
+        const phone = "919360436090";
+        const finalMsg = `Hello Averix Art Studio! ✏️\nI want to order: *${serviceName}*.\n\n*Details:* ${userMsg || 'I want to discuss the portrait details.'}`;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMsg)}`, '_blank');
     }
 </script>
+
 </body>
 </html>
